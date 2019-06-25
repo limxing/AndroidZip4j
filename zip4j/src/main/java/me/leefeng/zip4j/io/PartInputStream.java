@@ -29,7 +29,7 @@ import me.leefeng.zip4j.util.Zip4jConstants;
 public class PartInputStream extends BaseInputStream
 {
 	private RandomAccessFile raf;
-	private long bytesRead, length;
+	protected long bytesRead, length;
 	private UnzipEngine unzipEngine;
 	private IDecrypter decrypter;
 	private byte[] oneByteBuff = new byte[1];
