@@ -73,7 +73,7 @@ public class InflaterInputStream extends PartInputStream {
 		    	return -1;
 		    }
 		    while ((n = inflater.inflate(b, off, len)) == 0) {
-				if (inflater.finished() || inflater.needsDictionary() || inflater.getTotalIn() == length) {
+				if (inflater.finished() || inflater.needsDictionary() || length== 0 || inflater.getTotalIn() == length) {
 					finishInflating();
 				    return -1;
 				}
