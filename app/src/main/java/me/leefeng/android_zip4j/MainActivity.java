@@ -51,9 +51,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    File file = new File(Environment.getExternalStorageDirectory(),"PutaoAbc/course/1_15_1/zip");
+                    File file = new File(Environment.getExternalStorageDirectory(),"PutaoAbc/course/");
                     ZipFile zip = new ZipFile(new File(file.getAbsolutePath(),"resource.zip"));
-                    zip.setFileNameCharset("GBK");
                     zip.extractAll(file.getAbsolutePath());
                 } catch (ZipException e) {
                     e.printStackTrace();

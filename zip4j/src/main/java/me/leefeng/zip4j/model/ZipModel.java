@@ -1,184 +1,163 @@
 /*
-* Copyright 2010 Srikanth Reddy Lingala  
-* 
-* Licensed under the Apache License, Version 2.0 (the "License"); 
-* you may not use this file except in compliance with the License. 
-* You may obtain a copy of the License at 
-* 
-* http://www.apache.org/licenses/LICENSE-2.0 
-* 
-* Unless required by applicable law or agreed to in writing, 
-* software distributed under the License is distributed on an "AS IS" BASIS, 
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-* See the License for the specific language governing permissions and 
-* limitations under the License. 
-*/
+ * Copyright 2010 Srikanth Reddy Lingala
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package me.leefeng.zip4j.model;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ZipModel implements Cloneable {
-	
-	private List localFileHeaderList;
-	
-	private List dataDescriptorList;
-	
-	private ArchiveExtraDataRecord archiveExtraDataRecord;
-	
-	private CentralDirectory centralDirectory;
-	
-	private EndCentralDirRecord endCentralDirRecord;
-	
-	private Zip64EndCentralDirLocator zip64EndCentralDirLocator;
-	
-	private Zip64EndCentralDirRecord zip64EndCentralDirRecord;
-	
-	private boolean splitArchive;
-	
-	private long splitLength;
-	
-	private String zipFile;
 
-	private boolean isZip64Format;
-	
-	private boolean isNestedZipFile;
-	
-	private long start;
-	
-	private long end;
-	
-	private String fileNameCharset;
-	
-	public ZipModel() {
-		splitLength = -1;
-	}
-	
-	public List getLocalFileHeaderList() {
-		return localFileHeaderList;
-	}
+  private List<LocalFileHeader> localFileHeaders = new ArrayList<>();
+  private List<DataDescriptor> dataDescriptors = new ArrayList<>();
+  private ArchiveExtraDataRecord archiveExtraDataRecord = new ArchiveExtraDataRecord();
+  private CentralDirectory centralDirectory = new CentralDirectory();
+  private EndOfCentralDirectoryRecord endOfCentralDirectoryRecord = new EndOfCentralDirectoryRecord();
+  private Zip64EndOfCentralDirectoryLocator zip64EndOfCentralDirectoryLocator = new Zip64EndOfCentralDirectoryLocator();
+  private Zip64EndOfCentralDirectoryRecord zip64EndOfCentralDirectoryRecord = new Zip64EndOfCentralDirectoryRecord();
 
-	public void setLocalFileHeaderList(List localFileHeaderList) {
-		this.localFileHeaderList = localFileHeaderList;
-	}
+  private boolean splitArchive;
+  private long splitLength;
+  private File zipFile;
+  private boolean isZip64Format = false;
+  private boolean isNestedZipFile;
+  private long start;
+  private long end;
 
-	public List getDataDescriptorList() {
-		return dataDescriptorList;
-	}
+  public ZipModel() {
+    splitLength = -1;
+  }
 
-	public void setDataDescriptorList(List dataDescriptorList) {
-		this.dataDescriptorList = dataDescriptorList;
-	}
+  public List<LocalFileHeader> getLocalFileHeaders() {
+    return localFileHeaders;
+  }
 
-	public CentralDirectory getCentralDirectory() {
-		return centralDirectory;
-	}
+  public void setLocalFileHeaders(List<LocalFileHeader> localFileHeaderList) {
+    this.localFileHeaders = localFileHeaderList;
+  }
 
-	public void setCentralDirectory(CentralDirectory centralDirectory) {
-		this.centralDirectory = centralDirectory;
-	}
+  public List<DataDescriptor> getDataDescriptors() {
+    return dataDescriptors;
+  }
 
-	public EndCentralDirRecord getEndCentralDirRecord() {
-		return endCentralDirRecord;
-	}
+  public void setDataDescriptors(List<DataDescriptor> dataDescriptors) {
+    this.dataDescriptors = dataDescriptors;
+  }
 
-	public void setEndCentralDirRecord(EndCentralDirRecord endCentralDirRecord) {
-		this.endCentralDirRecord = endCentralDirRecord;
-	}
+  public CentralDirectory getCentralDirectory() {
+    return centralDirectory;
+  }
 
-	public ArchiveExtraDataRecord getArchiveExtraDataRecord() {
-		return archiveExtraDataRecord;
-	}
+  public void setCentralDirectory(CentralDirectory centralDirectory) {
+    this.centralDirectory = centralDirectory;
+  }
 
-	public void setArchiveExtraDataRecord(
-			ArchiveExtraDataRecord archiveExtraDataRecord) {
-		this.archiveExtraDataRecord = archiveExtraDataRecord;
-	}
+  public EndOfCentralDirectoryRecord getEndOfCentralDirectoryRecord() {
+    return endOfCentralDirectoryRecord;
+  }
 
-	public boolean isSplitArchive() {
-		return splitArchive;
-	}
+  public void setEndOfCentralDirectoryRecord(EndOfCentralDirectoryRecord endOfCentralDirectoryRecord) {
+    this.endOfCentralDirectoryRecord = endOfCentralDirectoryRecord;
+  }
 
-	public void setSplitArchive(boolean splitArchive) {
-		this.splitArchive = splitArchive;
-	}
+  public ArchiveExtraDataRecord getArchiveExtraDataRecord() {
+    return archiveExtraDataRecord;
+  }
 
-	public String getZipFile() {
-		return zipFile;
-	}
+  public void setArchiveExtraDataRecord(
+      ArchiveExtraDataRecord archiveExtraDataRecord) {
+    this.archiveExtraDataRecord = archiveExtraDataRecord;
+  }
 
-	public void setZipFile(String zipFile) {
-		this.zipFile = zipFile;
-	}
+  public boolean isSplitArchive() {
+    return splitArchive;
+  }
 
-	public Zip64EndCentralDirLocator getZip64EndCentralDirLocator() {
-		return zip64EndCentralDirLocator;
-	}
+  public void setSplitArchive(boolean splitArchive) {
+    this.splitArchive = splitArchive;
+  }
 
-	public void setZip64EndCentralDirLocator(
-			Zip64EndCentralDirLocator zip64EndCentralDirLocator) {
-		this.zip64EndCentralDirLocator = zip64EndCentralDirLocator;
-	}
+  public File getZipFile() {
+    return zipFile;
+  }
 
-	public Zip64EndCentralDirRecord getZip64EndCentralDirRecord() {
-		return zip64EndCentralDirRecord;
-	}
+  public void setZipFile(File zipFile) {
+    this.zipFile = zipFile;
+  }
 
-	public void setZip64EndCentralDirRecord(
-			Zip64EndCentralDirRecord zip64EndCentralDirRecord) {
-		this.zip64EndCentralDirRecord = zip64EndCentralDirRecord;
-	}
+  public Zip64EndOfCentralDirectoryLocator getZip64EndOfCentralDirectoryLocator() {
+    return zip64EndOfCentralDirectoryLocator;
+  }
 
-	public boolean isZip64Format() {
-		return isZip64Format;
-	}
+  public void setZip64EndOfCentralDirectoryLocator(
+      Zip64EndOfCentralDirectoryLocator zip64EndOfCentralDirectoryLocator) {
+    this.zip64EndOfCentralDirectoryLocator = zip64EndOfCentralDirectoryLocator;
+  }
 
-	public void setZip64Format(boolean isZip64Format) {
-		this.isZip64Format = isZip64Format;
-	}
+  public Zip64EndOfCentralDirectoryRecord getZip64EndOfCentralDirectoryRecord() {
+    return zip64EndOfCentralDirectoryRecord;
+  }
 
-	public boolean isNestedZipFile() {
-		return isNestedZipFile;
-	}
+  public void setZip64EndOfCentralDirectoryRecord(
+      Zip64EndOfCentralDirectoryRecord zip64EndOfCentralDirectoryRecord) {
+    this.zip64EndOfCentralDirectoryRecord = zip64EndOfCentralDirectoryRecord;
+  }
 
-	public void setNestedZipFile(boolean isNestedZipFile) {
-		this.isNestedZipFile = isNestedZipFile;
-	}
+  public boolean isZip64Format() {
+    return isZip64Format;
+  }
 
-	public long getStart() {
-		return start;
-	}
+  public void setZip64Format(boolean isZip64Format) {
+    this.isZip64Format = isZip64Format;
+  }
 
-	public void setStart(long start) {
-		this.start = start;
-	}
+  public boolean isNestedZipFile() {
+    return isNestedZipFile;
+  }
 
-	public long getEnd() {
-		return end;
-	}
+  public void setNestedZipFile(boolean isNestedZipFile) {
+    this.isNestedZipFile = isNestedZipFile;
+  }
 
-	public void setEnd(long end) {
-		this.end = end;
-	}
+  public long getStart() {
+    return start;
+  }
 
-	public long getSplitLength() {
-		return splitLength;
-	}
+  public void setStart(long start) {
+    this.start = start;
+  }
 
-	public void setSplitLength(long splitLength) {
-		this.splitLength = splitLength;
-	}
-	
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+  public long getEnd() {
+    return end;
+  }
 
-	public String getFileNameCharset() {
-		return fileNameCharset;
-	}
+  public void setEnd(long end) {
+    this.end = end;
+  }
 
-	public void setFileNameCharset(String fileNameCharset) {
-		this.fileNameCharset = fileNameCharset;
-	}
-	
+  public long getSplitLength() {
+    return splitLength;
+  }
+
+  public void setSplitLength(long splitLength) {
+    this.splitLength = splitLength;
+  }
+
+  public Object clone() throws CloneNotSupportedException {
+    return super.clone();
+  }
 }

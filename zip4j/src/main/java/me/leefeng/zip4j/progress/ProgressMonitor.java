@@ -1,180 +1,162 @@
 /*
-* Copyright 2010 Srikanth Reddy Lingala  
-* 
-* Licensed under the Apache License, Version 2.0 (the "License"); 
-* you may not use this file except in compliance with the License. 
-* You may obtain a copy of the License at 
-* 
-* http://www.apache.org/licenses/LICENSE-2.0 
-* 
-* Unless required by applicable law or agreed to in writing, 
-* software distributed under the License is distributed on an "AS IS" BASIS, 
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-* See the License for the specific language governing permissions and 
-* limitations under the License. 
-*/
+ * Copyright 2010 Srikanth Reddy Lingala
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package me.leefeng.zip4j.progress;
 
-import me.leefeng.zip4j.exception.ZipException;
-
 /**
  * If Zip4j is set to run in thread mode, this class helps retrieve current progress
- *
  */
 public class ProgressMonitor {
-	
-	private int state;
-	private long totalWork;
-	private long workCompleted;
-	private int percentDone;
-	private int currentOperation;
-	private String fileName;
-	private int result;
-	private Throwable exception;
-	private boolean cancelAllTasks;
-	private boolean pause;
-	
-	//Progress monitor States
-    public static final int STATE_READY = 0;
-    public static final int STATE_BUSY = 1;
-    
-    //Progress monitor result codes
-    public static final int RESULT_SUCCESS = 0;
-    public static final int RESULT_WORKING = 1;
-    public static final int RESULT_ERROR = 2;
-    public static final int RESULT_CANCELLED = 3;
-    
-    //Operation Types
-    public static final int OPERATION_NONE = -1;
-    public static final int OPERATION_ADD = 0;
-    public static final int OPERATION_EXTRACT = 1;
-    public static final int OPERATION_REMOVE = 2;
-    public static final int OPERATION_CALC_CRC = 3;
-    public static final int OPERATION_MERGE = 4;
-	
-	public ProgressMonitor() {
-		reset();
-		percentDone = 0;
-	}
 
-	public int getState() {
-		return state;
-	}
+  public enum State { READY, BUSY }
+  public enum Result { SUCCESS, WORK_IN_PROGRESS, ERROR, CANCELLED }
+  public enum Task { NONE, ADD_ENTRY, REMOVE_ENTRY, CALCULATE_CRC, EXTRACT_ENTRY, MERGE_ZIP_FILES, SET_COMMENT}
 
-	public void setState(int state) {
-		this.state = state;
-	}
+  private State state;
+  private long totalWork;
+  private long workCompleted;
+  private int percentDone;
+  private Task currentTask;
+  private String fileName;
+  private Result result;
+  private Exception exception;
+  private boolean cancelAllTasks;
+  private boolean pause;
 
-	public long getTotalWork() {
-		return totalWork;
-	}
+  public ProgressMonitor() {
+    reset();
+  }
 
-	public void setTotalWork(long totalWork) {
-		this.totalWork = totalWork;
-	}
+  public void updateWorkCompleted(long workCompleted) {
+    this.workCompleted += workCompleted;
 
-	public long getWorkCompleted() {
-		return workCompleted;
-	}
+    if (totalWork > 0) {
+      percentDone = (int) ((this.workCompleted * 100 / totalWork));
+      if (percentDone > 100) {
+        percentDone = 100;
+      }
+    }
 
-	public void updateWorkCompleted(long workCompleted) {
-		this.workCompleted += workCompleted;
-		
-		if (totalWork > 0) {
-			percentDone = (int)((this.workCompleted*100/totalWork));
-			if (percentDone > 100) {
-				percentDone = 100;
-			}
-		}
-		while (pause) {
-			try {
-				Thread.sleep(150);
-			} catch (InterruptedException e) {
-				//Do nothing
-			}
-		}
-	}
+    while (pause) {
+      try {
+        Thread.sleep(150);
+      } catch (InterruptedException e) {
+        //Do nothing
+      }
+    }
+  }
 
-	public int getPercentDone() {
-		return percentDone;
-	}
+  public void endProgressMonitor() {
+    result = Result.SUCCESS;
+    percentDone = 100;
+    reset();
+  }
 
-	public void setPercentDone(int percentDone) {
-		this.percentDone = percentDone;
-	}
+  public void endProgressMonitor(Exception e) {
+    result = Result.ERROR;
+    exception = e;
+    reset();
+  }
 
-	public int getResult() {
-		return result;
-	}
+  public void fullReset() {
+    reset();
+    fileName = null;
+    totalWork = 0;
+    workCompleted = 0;
+    percentDone = 0;
+  }
 
-	public void setResult(int result) {
-		this.result = result;
-	}
+  private void reset() {
+    currentTask = Task.NONE;
+    state = State.READY;
+  }
 
-	public String getFileName() {
-		return fileName;
-	}
+  public State getState() {
+    return state;
+  }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+  public void setState(State state) {
+    this.state = state;
+  }
 
-	public int getCurrentOperation() {
-		return currentOperation;
-	}
+  public long getTotalWork() {
+    return totalWork;
+  }
 
-	public void setCurrentOperation(int currentOperation) {
-		this.currentOperation = currentOperation;
-	}
+  public void setTotalWork(long totalWork) {
+    this.totalWork = totalWork;
+  }
 
-	public Throwable getException() {
-		return exception;
-	}
+  public long getWorkCompleted() {
+    return workCompleted;
+  }
 
-	public void setException(Throwable exception) {
-		this.exception = exception;
-	}
-	
-	public void endProgressMonitorSuccess() throws ZipException {
-		reset();
-		result = ProgressMonitor.RESULT_SUCCESS;
-	}
-	
-	public void endProgressMonitorError(Throwable e) throws ZipException {
-		reset();
-		result = ProgressMonitor.RESULT_ERROR;
-		exception = e;
-	}
-	
-	public void reset() {
-		currentOperation = OPERATION_NONE;
-		state = STATE_READY;
-		fileName = null;
-		totalWork = 0;
-		workCompleted = 0;
-		percentDone = 0;
-	}
-	
-	public void fullReset() {
-		reset();
-		exception = null;
-		result = RESULT_SUCCESS;
-	}
+  public int getPercentDone() {
+    return percentDone;
+  }
 
-	public boolean isCancelAllTasks() {
-		return cancelAllTasks;
-	}
+  public void setPercentDone(int percentDone) {
+    this.percentDone = percentDone;
+  }
 
-	public void cancelAllTasks() {
-		this.cancelAllTasks = true;
-	}
+  public Task getCurrentTask() {
+    return currentTask;
+  }
 
-	public boolean isPause() {
-		return pause;
-	}
+  public void setCurrentTask(Task currentTask) {
+    this.currentTask = currentTask;
+  }
 
-	public void setPause(boolean pause) {
-		this.pause = pause;
-	}
+  public String getFileName() {
+    return fileName;
+  }
+
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
+
+  public Result getResult() {
+    return result;
+  }
+
+  public void setResult(Result result) {
+    this.result = result;
+  }
+
+  public Exception getException() {
+    return exception;
+  }
+
+  public void setException(Exception exception) {
+    this.exception = exception;
+  }
+
+  public boolean isCancelAllTasks() {
+    return cancelAllTasks;
+  }
+
+  public void setCancelAllTasks(boolean cancelAllTasks) {
+    this.cancelAllTasks = cancelAllTasks;
+  }
+
+  public boolean isPause() {
+    return pause;
+  }
+
+  public void setPause(boolean pause) {
+    this.pause = pause;
+  }
 }

@@ -1,195 +1,211 @@
 /*
-* Copyright 2010 Srikanth Reddy Lingala  
-* 
-* Licensed under the Apache License, Version 2.0 (the "License"); 
-* you may not use this file except in compliance with the License. 
-* You may obtain a copy of the License at 
-* 
-* http://www.apache.org/licenses/LICENSE-2.0 
-* 
-* Unless required by applicable law or agreed to in writing, 
-* software distributed under the License is distributed on an "AS IS" BASIS, 
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-* See the License for the specific language governing permissions and 
-* limitations under the License. 
-*/
+ * Copyright 2010 Srikanth Reddy Lingala
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package me.leefeng.zip4j.model;
 
-import java.util.TimeZone;
+import me.leefeng.zip4j.model.enums.AesKeyStrength;
+import me.leefeng.zip4j.model.enums.AesVersion;
+import me.leefeng.zip4j.model.enums.CompressionLevel;
+import me.leefeng.zip4j.model.enums.CompressionMethod;
+import me.leefeng.zip4j.model.enums.EncryptionMethod;
 
-import me.leefeng.zip4j.util.InternalZipConstants;
-import me.leefeng.zip4j.util.Zip4jConstants;
-import me.leefeng.zip4j.util.Zip4jUtil;
+public class ZipParameters {
 
-public class ZipParameters implements Cloneable {
-	
-	private int compressionMethod;
-	private int compressionLevel;
-	private boolean encryptFiles;
-	private int encryptionMethod;
-	private boolean readHiddenFiles;
-	private char[] password;
-	private int aesKeyStrength;
-	private boolean includeRootFolder;
-	private String rootFolderInZip;
-	private TimeZone timeZone;
-	private int sourceFileCRC;
-	private String defaultFolderPath;
-	private String fileNameInZip;
-	private boolean isSourceExternalStream;
-	
-	public ZipParameters() {
-		compressionMethod = Zip4jConstants.COMP_DEFLATE;
-		encryptFiles = false;
-		readHiddenFiles = true;
-		encryptionMethod = Zip4jConstants.ENC_NO_ENCRYPTION;
-		aesKeyStrength = -1;
-		includeRootFolder = true;
-		timeZone = TimeZone.getDefault();
-	}
+  private CompressionMethod compressionMethod = CompressionMethod.DEFLATE;
+  private CompressionLevel compressionLevel = CompressionLevel.NORMAL;
+  private boolean encryptFiles = false;
+  private EncryptionMethod encryptionMethod = EncryptionMethod.NONE;
+  private boolean readHiddenFiles = true;
+  private boolean readHiddenFolders = true;
+  private AesKeyStrength aesKeyStrength = AesKeyStrength.KEY_STRENGTH_256;
+  private AesVersion aesVersion = AesVersion.TWO;
+  private boolean includeRootFolder = true;
+  private long entryCRC;
+  private String defaultFolderPath;
+  private String fileNameInZip;
+  private long lastModifiedFileTime = System.currentTimeMillis();
+  private long entrySize = -1;
+  private boolean writeExtendedLocalFileHeader = true;
+  private boolean overrideExistingFilesInZip = true;
+  private String rootFolderNameInZip;
 
-	public int getCompressionMethod() {
-		return compressionMethod;
-	}
+  public ZipParameters() {
+  }
 
-	public void setCompressionMethod(int compressionMethod) {
-		this.compressionMethod = compressionMethod;
-	}
+  public ZipParameters(ZipParameters zipParameters) {
+    this.compressionMethod = zipParameters.getCompressionMethod();
+    this.compressionLevel = zipParameters.getCompressionLevel();
+    this.encryptFiles = zipParameters.isEncryptFiles();
+    this.encryptionMethod = zipParameters.getEncryptionMethod();
+    this.readHiddenFiles = zipParameters.isReadHiddenFiles();
+    this.readHiddenFolders = zipParameters.isReadHiddenFolders();
+    this.aesKeyStrength = zipParameters.getAesKeyStrength();
+    this.aesVersion = zipParameters.getAesVersion();
+    this.includeRootFolder = zipParameters.isIncludeRootFolder();
+    this.entryCRC = zipParameters.getEntryCRC();
+    this.defaultFolderPath = zipParameters.getDefaultFolderPath();
+    this.fileNameInZip = zipParameters.getFileNameInZip();
+    this.lastModifiedFileTime = zipParameters.getLastModifiedFileTime();
+    this.entrySize = zipParameters.getEntrySize();
+    this.writeExtendedLocalFileHeader = zipParameters.isWriteExtendedLocalFileHeader();
+    this.overrideExistingFilesInZip = zipParameters.isOverrideExistingFilesInZip();
+    this.rootFolderNameInZip = zipParameters.getRootFolderNameInZip();
+  }
 
-	public boolean isEncryptFiles() {
-		return encryptFiles;
-	}
+  public CompressionMethod getCompressionMethod() {
+    return compressionMethod;
+  }
 
-	public void setEncryptFiles(boolean encryptFiles) {
-		this.encryptFiles = encryptFiles;
-	}
+  public void setCompressionMethod(CompressionMethod compressionMethod) {
+    this.compressionMethod = compressionMethod;
+  }
 
-	public int getEncryptionMethod() {
-		return encryptionMethod;
-	}
+  public boolean isEncryptFiles() {
+    return encryptFiles;
+  }
 
-	public void setEncryptionMethod(int encryptionMethod) {
-		this.encryptionMethod = encryptionMethod;
-	}
+  public void setEncryptFiles(boolean encryptFiles) {
+    this.encryptFiles = encryptFiles;
+  }
 
-	public int getCompressionLevel() {
-		return compressionLevel;
-	}
+  public EncryptionMethod getEncryptionMethod() {
+    return encryptionMethod;
+  }
 
-	public void setCompressionLevel(int compressionLevel) {
-		this.compressionLevel = compressionLevel;
-	}
+  public void setEncryptionMethod(EncryptionMethod encryptionMethod) {
+    this.encryptionMethod = encryptionMethod;
+  }
 
-	public boolean isReadHiddenFiles() {
-		return readHiddenFiles;
-	}
+  public CompressionLevel getCompressionLevel() {
+    return compressionLevel;
+  }
 
-	public void setReadHiddenFiles(boolean readHiddenFiles) {
-		this.readHiddenFiles = readHiddenFiles;
-	}
-	
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+  public void setCompressionLevel(CompressionLevel compressionLevel) {
+    this.compressionLevel = compressionLevel;
+  }
 
-	public char[] getPassword() {
-		return password;
-	}
+  public boolean isReadHiddenFiles() {
+    return readHiddenFiles;
+  }
 
-	/**
-	 * Sets the password for the zip file or the file being added<br>
-	 * <b>Note</b>: For security reasons, usage of this method is discouraged. Use 
-	 * setPassword(char[]) instead. As strings are immutable, they cannot be wiped
-	 * out from memory explicitly after usage. Therefore, usage of Strings to store 
-	 * passwords is discouraged. More info here: 
-	 * http://docs.oracle.com/javase/1.5.0/docs/guide/security/jce/JCERefGuide.html#PBEEx
-	 * @param password
-	 */
-	public void setPassword(String password) {
-		if (password == null) return;
-		setPassword(password.toCharArray());
-	}
-	
-	public void setPassword(char[] password) {
-		this.password = password;
-	}
+  public void setReadHiddenFiles(boolean readHiddenFiles) {
+    this.readHiddenFiles = readHiddenFiles;
+  }
 
-	public int getAesKeyStrength() {
-		return aesKeyStrength;
-	}
+  public boolean isReadHiddenFolders() {
+    return readHiddenFolders;
+  }
 
-	public void setAesKeyStrength(int aesKeyStrength) {
-		this.aesKeyStrength = aesKeyStrength;
-	}
+  public void setReadHiddenFolders(boolean readHiddenFolders) {
+    this.readHiddenFolders = readHiddenFolders;
+  }
 
-	public boolean isIncludeRootFolder() {
-		return includeRootFolder;
-	}
+  public Object clone() throws CloneNotSupportedException {
+    return super.clone();
+  }
 
-	public void setIncludeRootFolder(boolean includeRootFolder) {
-		this.includeRootFolder = includeRootFolder;
-	}
+  public AesKeyStrength getAesKeyStrength() {
+    return aesKeyStrength;
+  }
 
-	public String getRootFolderInZip() {
-		return rootFolderInZip;
-	}
+  public void setAesKeyStrength(AesKeyStrength aesKeyStrength) {
+    this.aesKeyStrength = aesKeyStrength;
+  }
 
-	public void setRootFolderInZip(String rootFolderInZip) {
-		if (Zip4jUtil.isStringNotNullAndNotEmpty(rootFolderInZip)) {
-			
-			if (!rootFolderInZip.endsWith("\\") && !rootFolderInZip.endsWith("/")) {
-				rootFolderInZip = rootFolderInZip + InternalZipConstants.FILE_SEPARATOR;
-			}
-			
-			rootFolderInZip = rootFolderInZip.replaceAll("\\\\", "/");
-			
-//			if (rootFolderInZip.endsWith("/")) {
-//				rootFolderInZip = rootFolderInZip.substring(0, rootFolderInZip.length() - 1);
-//				rootFolderInZip = rootFolderInZip + "\\";
-//			}
-		} 
-		this.rootFolderInZip = rootFolderInZip;
-	}
+  public AesVersion getAesVersion() {
+    return aesVersion;
+  }
 
-	public TimeZone getTimeZone() {
-		return timeZone;
-	}
+  public void setAesVersion(AesVersion aesVersion) {
+    this.aesVersion = aesVersion;
+  }
 
-	public void setTimeZone(TimeZone timeZone) {
-		this.timeZone = timeZone;
-	}
+  public boolean isIncludeRootFolder() {
+    return includeRootFolder;
+  }
 
-	public int getSourceFileCRC() {
-		return sourceFileCRC;
-	}
+  public void setIncludeRootFolder(boolean includeRootFolder) {
+    this.includeRootFolder = includeRootFolder;
+  }
 
-	public void setSourceFileCRC(int sourceFileCRC) {
-		this.sourceFileCRC = sourceFileCRC;
-	}
+  public long getEntryCRC() {
+    return entryCRC;
+  }
 
-	public String getDefaultFolderPath() {
-		return defaultFolderPath;
-	}
+  public void setEntryCRC(long entryCRC) {
+    this.entryCRC = entryCRC;
+  }
 
-	public void setDefaultFolderPath(String defaultFolderPath) {
-		this.defaultFolderPath = defaultFolderPath;
-	}
+  public String getDefaultFolderPath() {
+    return defaultFolderPath;
+  }
 
-	public String getFileNameInZip() {
-		return fileNameInZip;
-	}
+  public void setDefaultFolderPath(String defaultFolderPath) {
+    this.defaultFolderPath = defaultFolderPath;
+  }
 
-	public void setFileNameInZip(String fileNameInZip) {
-		this.fileNameInZip = fileNameInZip;
-	}
+  public String getFileNameInZip() {
+    return fileNameInZip;
+  }
 
-	public boolean isSourceExternalStream() {
-		return isSourceExternalStream;
-	}
+  public void setFileNameInZip(String fileNameInZip) {
+    this.fileNameInZip = fileNameInZip;
+  }
 
-	public void setSourceExternalStream(boolean isSourceExternalStream) {
-		this.isSourceExternalStream = isSourceExternalStream;
-	}
-	
+  public long getLastModifiedFileTime() {
+    return lastModifiedFileTime;
+  }
+
+  public void setLastModifiedFileTime(long lastModifiedFileTime) {
+    if (lastModifiedFileTime <= 0) {
+      return;
+    }
+
+    this.lastModifiedFileTime = lastModifiedFileTime;
+  }
+
+  public long getEntrySize() {
+    return entrySize;
+  }
+
+  public void setEntrySize(long entrySize) {
+    this.entrySize = entrySize;
+  }
+
+  public boolean isWriteExtendedLocalFileHeader() {
+    return writeExtendedLocalFileHeader;
+  }
+
+  public void setWriteExtendedLocalFileHeader(boolean writeExtendedLocalFileHeader) {
+    this.writeExtendedLocalFileHeader = writeExtendedLocalFileHeader;
+  }
+
+  public boolean isOverrideExistingFilesInZip() {
+    return overrideExistingFilesInZip;
+  }
+
+  public void setOverrideExistingFilesInZip(boolean overrideExistingFilesInZip) {
+    this.overrideExistingFilesInZip = overrideExistingFilesInZip;
+  }
+
+  public String getRootFolderNameInZip() {
+    return rootFolderNameInZip;
+  }
+
+  public void setRootFolderNameInZip(String rootFolderNameInZip) {
+    this.rootFolderNameInZip = rootFolderNameInZip;
+  }
 }

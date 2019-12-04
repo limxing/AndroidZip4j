@@ -1,97 +1,80 @@
 /*
-* Copyright 2010 Srikanth Reddy Lingala  
-* 
-* Licensed under the Apache License, Version 2.0 (the "License"); 
-* you may not use this file except in compliance with the License. 
-* You may obtain a copy of the License at 
-* 
-* http://www.apache.org/licenses/LICENSE-2.0 
-* 
-* Unless required by applicable law or agreed to in writing, 
-* software distributed under the License is distributed on an "AS IS" BASIS, 
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-* See the License for the specific language governing permissions and 
-* limitations under the License. 
-*/
+ * Copyright 2010 Srikanth Reddy Lingala
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package me.leefeng.zip4j.model;
 
-public class AESExtraDataRecord {
-	
-	private long signature;
-	private int dataSize;
-	private int versionNumber;
-	private String vendorID;
-	private int aesStrength;
-	private int compressionMethod;
-	
-	public AESExtraDataRecord() {
-		signature = -1;
-		dataSize = -1;
-		versionNumber = -1;
-		vendorID = null;
-		aesStrength = -1;
-		compressionMethod = -1;
-	}
+import me.leefeng.zip4j.headers.HeaderSignature;
+import me.leefeng.zip4j.model.enums.AesKeyStrength;
+import me.leefeng.zip4j.model.enums.AesVersion;
+import me.leefeng.zip4j.model.enums.CompressionMethod;
 
+public class AESExtraDataRecord extends ZipHeader {
 
-	public long getSignature() {
-		return signature;
-	}
+  private int dataSize;
+  private AesVersion aesVersion;
+  private String vendorID;
+  private AesKeyStrength aesKeyStrength;
+  private CompressionMethod compressionMethod;
 
+  public AESExtraDataRecord() {
+    setSignature(HeaderSignature.AES_EXTRA_DATA_RECORD);
+    dataSize = 7;
+    aesVersion = AesVersion.TWO;
+    vendorID = "AE";
+    aesKeyStrength = AesKeyStrength.KEY_STRENGTH_256;
+    compressionMethod = CompressionMethod.DEFLATE;
+  }
 
-	public void setSignature(long signature) {
-		this.signature = signature;
-	}
+  public int getDataSize() {
+    return dataSize;
+  }
 
+  public void setDataSize(int dataSize) {
+    this.dataSize = dataSize;
+  }
 
-	public int getDataSize() {
-		return dataSize;
-	}
+  public AesVersion getAesVersion() {
+    return aesVersion;
+  }
 
+  public void setAesVersion(AesVersion aesVersion) {
+    this.aesVersion = aesVersion;
+  }
 
-	public void setDataSize(int dataSize) {
-		this.dataSize = dataSize;
-	}
+  public String getVendorID() {
+    return vendorID;
+  }
 
+  public void setVendorID(String vendorID) {
+    this.vendorID = vendorID;
+  }
 
-	public int getVersionNumber() {
-		return versionNumber;
-	}
+  public AesKeyStrength getAesKeyStrength() {
+    return aesKeyStrength;
+  }
 
+  public void setAesKeyStrength(AesKeyStrength aesKeyStrength) {
+    this.aesKeyStrength = aesKeyStrength;
+  }
 
-	public void setVersionNumber(int versionNumber) {
-		this.versionNumber = versionNumber;
-	}
+  public CompressionMethod getCompressionMethod() {
+    return compressionMethod;
+  }
 
-
-	public String getVendorID() {
-		return vendorID;
-	}
-
-
-	public void setVendorID(String vendorID) {
-		this.vendorID = vendorID;
-	}
-
-
-	public int getAesStrength() {
-		return aesStrength;
-	}
-
-
-	public void setAesStrength(int aesStrength) {
-		this.aesStrength = aesStrength;
-	}
-
-
-	public int getCompressionMethod() {
-		return compressionMethod;
-	}
-
-
-	public void setCompressionMethod(int compressionMethod) {
-		this.compressionMethod = compressionMethod;
-	}
-	
+  public void setCompressionMethod(CompressionMethod compressionMethod) {
+    this.compressionMethod = compressionMethod;
+  }
 }
